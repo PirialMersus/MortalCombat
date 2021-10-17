@@ -62,34 +62,46 @@ function createPlayer(player) {
     return $player;
 }
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+
 function changeHP(player) {
     const $playerLife = document.querySelector(`.player${player.player} .life`);
-    player.hp -= Math.random() * 20; 
+    player.hp -= getRandomInt(20);
+
     if (player.hp < 0) {
-        $randomButton.disabled = true;
+
         player.hp = 0;
-        $arenas.appendChild(playerLose(player.name));
-        console.log([`player${3 - player.player}`].name);
     }
     $playerLife.style.width = player.hp + '%';
-
-    // if (player.hp < 0) {
-    //     $randomButton.disabled = true;
-    //     player.hp = 0;
-    //     $arenas.appendChild(playerLose(player.name));
-    // }
+    return player.hp;
 }
 
-function playerLose(name) {
-    const $loseTitle = createElement('div', 'loseTitle');
-    $loseTitle.innerText = name + ' lose';
+function playerWin(name) {
+    const $winTitle = createElement('div', 'winTitle');
+    $winTitle.innerText = name + ' win';
 
-    return $loseTitle;
+    return $winTitle;
 }
 
 $randomButton.addEventListener('click', () => {
-    changeHP(player1);
-    changeHP(player2);
+    const player1Hp = changeHP(player1);
+    const player2Hp = changeHP(player2);
+    if (player1Hp <= 0 || player2Hp <= 0) {
+        $randomButton.disabled = true;
+        if (player1Hp > player2Hp) {
+            $arenas.appendChild(playerWin(player1.name));
+            player2.hp = 0;
+        } else if (player1Hp < player2Hp) {
+            $arenas.appendChild(playerWin(player2.name));
+            player1.hp = 0;
+        } else {
+            $arenas.appendChild(playerWin('Friendship'));
+        }
+    }
+
 })
 
 $arenas.appendChild(createPlayer(player1));
